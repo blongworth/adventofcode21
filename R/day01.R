@@ -101,14 +101,49 @@ tally_deeper <- function(depths) {
 
 #' @rdname day01
 #' @export
-f01b <- function(x) {
+tally_window <- function(depths) {
+  deeper_tally <- 0L
+  for (i in 4:length(depths)) {
+   prev_sum <- sum(depths[c(i-3, i-2, i-1)])
+   sum <- sum(depths[c(i-2, i-1, i)])
+   if (sum > prev_sum) {
+     deeper_tally <- deeper_tally + 1
+   }
+  }
+  deeper_tally
 
 }
 
+tally_deeper_tidy <- function(x) {
+ sum(x > dplyr::lag(x), na.rm = TRUE)
+}
+
+tally_window_tidy <- function(x) {
+ s <- na.omit(x + lead(x) + lead(x,2))
+ sum(s > lag(s), na.rm = TRUE)
+}
+
+tally_deeper_simple <- function(d) sum(diff(d)>0)
+tally_window_simple <- function(d) sum(diff(d, lag = 3)>0)
+
+
+#' @rdname day01
+#' @export
+tally_window <- function(depths) {
+  deeper_tally <- 0L
+  for (i in 4:length(depths)) {
+   prev_sum <- sum(depths[c(i-3, i-2, i-1)])
+   sum <- sum(depths[c(i-2, i-1, i)])
+   if (sum > prev_sum) {
+     deeper_tally <- deeper_tally + 1
+   }
+  }
+  deeper_tally
+
+}
 
 get_day1 <- function(file = here::here("inst/input01.txt")) {
-  d1d <- read.table(file)
-  d1d[[1]]
+  read.table(file)[[1]]
 }
 
 
