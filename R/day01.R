@@ -106,8 +106,9 @@ f01b <- function(x) {
 }
 
 
-f01_helper <- function(x) {
-
+get_day1 <- function(file = here::here("inst/input01.txt")) {
+  d1d <- read.table(file)
+  d1d[[1]]
 }
 
 
