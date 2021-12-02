@@ -90,13 +90,19 @@ f02b <- function(x) {
 sub_pos_iter <- function(x) {
   pos = c(x = 0, y = 0)
   aim = 0
-  for (row in x) {
-    if (dir == "forward") {
-
+  for (i in 1:nrow(x)) {
+    if (x[i,1] == "forward") {
+      pos[1] = pos[1] + x[i,2]
+      pos[2] = pos[2] + aim * x[i,2]
     } else {
-
+      if (x[i,1] == "up") {
+        aim = aim - x[i,2]
+      } else {
+        aim = aim + x[i,2]
+      }
     }
   }
+  pos
 }
 
 f02_helper <- function(x) {
