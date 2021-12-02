@@ -75,14 +75,29 @@ f02a <- function(x) {
 #' @export
 f02b <- function(x) {
   x %>%
-    mutate(aim = 0,
-           axis = ifelse(dir == "forward", "x", "y"),
+    mutate(axis = ifelse(dir == "forward", "x", "y"),
+           value = ifelse(dir == "up", -value, value)) %>%
+    select(axis, value) %>%
+    pivot_wider(names_from = axis, values_from = value)
+    (aim = 0,
            aim = ifelse(dir != "forward", lag(aim) + value, lag(aim))) %>%
     group_by(axis) %>%
     summarize(units = sum(units))
 
 }
 
+# iterative approach
+sub_pos_iter <- function(x) {
+  pos = c(x = 0, y = 0)
+  aim = 0
+  for (row in x) {
+    if (dir == "forward") {
+
+    } else {
+
+    }
+  }
+}
 
 f02_helper <- function(x) {
   readr::read_delim("inst/input02.txt", delim = " ", col_names = c("dir", "value"))
