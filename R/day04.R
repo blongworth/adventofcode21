@@ -101,42 +101,32 @@
 #' f04a(example_data_04())
 #' f04b()
 f04a <- function(x) {
-
+  slice(wins, 1)
 }
 
 
 #' @rdname day04
 #' @export
 f04b <- function(x) {
-
+  slice(wins(n()))
 }
 
 
-f04_helper <- function(x) {
-
+f04_helper <- function(data) {
+  picks <- read_picks(data)
+  boards <- read_boards(data)
+  bingo(picks, boards)
 }
 
 
-#' @param example Which example data to use (by position or name). Defaults to
-#'   1.
-#' @rdname day04
-#' @export
-example_data_04 <- function(example = 1) {
-  l <- list(
-    a = c(
-
-
-    )
-  )
-  l[[example]]
-}
-
+# read list of bingo picks from data
 read_picks <- function(file) {
   read.csv(file, header = FALSE, nrows = 1)[1,] |>
     t() |>
     as.vector()
 }
 
+# read bingo boards as a list of matrixes
 read_boards <- function(file) {
   skip <- 2
   num_boards <- (R.utils::countLines(file) - 1)/6
@@ -147,35 +137,6 @@ read_boards <- function(file) {
       boards[[i]] <- as.matrix(board)
   }
   boards
-}
-
-# Run bingo. Iterate through picks, keeping track of board state.
-# Let us know how many turns, winner, and winning score
-bingo <- function(picks, boards) {
-  # initialize dabs
-  dabs <- replicate(length(boards), matrix(FALSE, 5, 5), simplify = FALSE)
-  wins <- list("round" = integer(length = length(boards)),
-               "winner" = integer(length = length(boards)),
-               "score" = integer(length = length(boards)))
-  names(wins) <- c("round", "winner", "score")
-
-  for (j in 1:length(picks)) {
-    for (i in 1:length(boards)) {
-      # dab boards
-      dabs[[i]][which(boards[[i]] == picks[j])] <- TRUE
-      if (check_bingo(dabs[[i]])) {
-        score <- score_bingo(boards[[i]], dabs[[i]], picks[j])
-        if (!(i %in% wins[[1]])) {
-          wins[[1]] <- c(wins[[1]], j)
-          wins[[2]] <- c(wins[[2]], i)
-          wins[[3]] <- c(wins[[3]], score)
-
-          print(c("round" = j, "winner" = i, "score" = score))
-        }
-      }
-    }
-  }
-  wins
 }
 
 # check for bingo win. Return TRUE for win.
@@ -189,7 +150,37 @@ check_bingo <- function(dab) {
   FALSE
 }
 
+# score a bingo winner
 score_bingo <- function(board, dab, pick) {
   marked <- board[which(!dab)]
   sum(marked) * pick
 }
+
+# Run bingo. Iterate through picks, keeping track of board state.
+# Let us know how many turns, winner, and winning score
+bingo <- function(picks, boards) {
+  # initialize dabs
+  dabs <- replicate(length(boards), matrix(FALSE, 5, 5), simplify = FALSE)
+  wins <- tibble(round = integer(), winner = integer(), score = integer())
+
+  for (j in 1:length(picks)) {
+    for (i in 1:length(boards)) {
+      dabs[[i]][which(boards[[i]] == picks[j])] <- TRUE
+      if (check_bingo(dabs[[i]])) {
+        if (!(i %in% wins$winner)) {
+          score <- score_bingo(boards[[i]], dabs[[i]], picks[j])
+          wins <- add_row(wins, "round" = j, "winner" = i, "score" = score)
+        }
+      }
+    }
+  }
+  wins
+}
+
+f04 <- function(data) {
+  picks <- read_picks(data)
+  boards <- read_boards(data)
+  wins <- bingo(picks, boards)
+  slice(wins, c(1,n()))
+}
+
