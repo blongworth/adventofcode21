@@ -25,8 +25,18 @@ deeper_window = function (depth)
     d
 end
 
+
 #Get data
 d1 = parse.(Int, readlines("inst/input01.txt"))
+
+# List comp for part A
+sum([d1[i+1] > d1[i] for i = 1:length(d1)-1])
+
+# I like this one
+count(>(0), diff(d1))
+roll = [sum(d1[i:i+2]) for i in 1:length(d1)-2]
+count(>(0), diff(roll))
+
 
 deeper(d1)
 deeper_window(d1)
