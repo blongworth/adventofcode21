@@ -74,16 +74,14 @@
 #' f07b()
 f07a <- function(x) {
   crabs <- as.integer(unlist(strsplit(x, ",")))
-  map <- min(crabs):max(crabs)
-  fuel <- integer(length(crabs))
-  pos_tot <- integer(length(map))
-  names(pos_tot) <- map
-  for (pos in map) {
-    # total fuel for location
-    fuel <- abs(crabs - pos)
-    pos_tot[as.character(pos)] <- sum(fuel)
-  }
-  min(pos)
+  costmap <- data.frame(pos = min(crabs):max(crabs))
+  # cost for each crab for a position
+  map_int(crabs, ~abs(. - pos))
+
+  # this doesn't work to map that to each pos
+  costmap %>%
+    mutate(cost = map_int(crabs, ~abs(. - pos))) %>%
+    summarize(min_cost = min(cost))
 }
 
 
