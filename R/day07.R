@@ -83,21 +83,26 @@ f07a <- function(x) {
     fuel <- abs(crabs - pos)
     pos_tot[as.character(pos)] <- sum(fuel)
   }
-  min(pos)
+  min(pos_tot)
 }
 
 
 #' @rdname day07
 #' @export
 f07b <- function(x) {
-
+  crabs <- as.integer(unlist(strsplit(x, ",")))
+  map <- min(crabs):max(crabs)
+  pos_tot <- double(length(map))
+  names(pos_tot) <- map
+  fuel <- double(length(crabs))
+  for (pos in map) {
+    # total fuel for location
+    steps <- abs(crabs - pos)
+    fuel <- steps * (steps + 1)/2
+    pos_tot[as.character(pos)] <- sum(fuel)
+  }
+  min(pos_tot)
 }
-
-
-f07_helper <- function(x) {
-
-}
-
 
 #' @param example Which example data to use (by position or name). Defaults to
 #'   1.
