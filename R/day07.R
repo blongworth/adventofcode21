@@ -111,3 +111,14 @@ f07b <- function(x) {
 example_data_07 <- function() {
   "16,1,2,0,4,2,7,1,2,14"
 }
+
+# cool mapped sol'n from Emil Hvitfeldt
+EHD7 <- function(x, part = "a") {
+  crabs <- as.integer(unlist(strsplit(x, ",")))
+  values <- seq(min(crabs), max(crabs))
+  if (part)
+    adjust <- function(n) n * (n + 1) / 2
+  fuels <- purrr::map_dbl(values, ~sum(adjust(abs(crabs - .x))))
+  min(fuels)
+  dd
+}
