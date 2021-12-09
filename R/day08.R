@@ -146,28 +146,43 @@ f08a <- function(x) {
 library(tidyverse)
 library(stringi)
 
+# maybe helpful for initializing data
+#  boards <- replicate(num_boards, diag(5), simplify = FALSE)
+
+
 # Each reading is different!!
 #' @rdname day08
 #' @export
 f08b <- function(x) {
   disp <- parse_input(x)
-  key <- tibble(number = integer(10), segments = character(10))
-  all_disp <- strsplit(x, " \\| | ")
-  all_disp_flat <- flatten_chr(all_disp)
-  striHelper <- function(x) stri_c(x[stri_order(x)], collapse = "")
-  stri_sort(map_chr(all_disp_flat, striHelper))
+  key <- tibble(num = 0:9,
+                seg = character(10),
+                t_seg = c(6,2,5,5,4,5,6,3,7,5))
 
-  disp$output <- strsplit(disp$output, " ")
-    flatten_chr()
-  unique(all_disp[which(nchar(all_disp) == 2)])
-  chars <- map(disp$output, nchar)
-  flatten_chr(disp$output)
-  flatten_int(chars)
-  which(chars[[1]] == 2)
 
-  disp1 <- map(disp, c(1, 2))
+  add_column(disp, key = tibble(nrow(disp)))
+  disp$key[,1] <- key
+  nest(c(disp, )))
 }
 
+decode <- function(row) {
+  key <- tibble(num = 0:9,
+                seg = character(10),
+                nseg = c(6,2,5,5,4,5,6,3,7,5))
+  n <- nchar(unlist(row$pattern))
+
+  # decode 1,3,4,8 using nchar
+  key$seg[which(n == key$nseg)] <- ifelse(n %in% c(2,3,4,7),
+                                          digit,
+                                          "")
+  for (i in seq_along(unlist(row$pattern))) {
+    if (n[i] %in% c(2,3,4,7)) {
+      print(TRUE)
+      key$seg[which(n == key$nseg)] <- unlist(row$pattern)[i]
+    } else print(FALSE)
+  }
+
+}
 f08_helper <- function(x) {
 
 }
@@ -178,7 +193,7 @@ f08_helper <- function(x) {
 #' @rdname day08
 #' @export
 example_data_08 <- function(example = 1) {
-  l <- list(
+  l <-
     a = c(
 
 
