@@ -98,8 +98,6 @@ find_minima <- function(grid) {
       } else {
         neighbors <- c(neighbors, grid[x,y+1], grid[x,y-1])
       }
-
-      # edge cases produce NA!
       if (all(z < neighbors)) {
         minima <- bind_rows(minima, tibble_row(x = x, y = y, z = z))
       }
