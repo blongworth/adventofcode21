@@ -62,23 +62,10 @@
 #' @examples
 #' f09a(example_data_09())
 #' f09b()
-f09a <- function(x) {
-  grid <- make_grid(x)
-  minima <- integer()
-  for (i in 1:nrow(grid)) {
-    for (j in 1:ncol(grid)) {
-      point <- grid[i,j]
-      # edge cases produce NA!
-      if (point < grid[i+1,j] &
-          point < grid[i-1,j] &
-          point < grid[i,j+1] &
-          point < grid[i,j-1]) {
-        minima <- c(minima, grid[i,j])
-      }
-    }
-  }
-  print(minima)
-  sum(minima)
+f09a <- function(data) {
+  grid <- make_grid(data)
+  minima <- find_minima(grid)
+  sum(minima$z + 1)
 }
 
 # minimum = all adjacent values are higher
@@ -92,15 +79,42 @@ make_grid <- function(x) {
     matrix(nrow = 100)
 }
 
-find_mi <- function(variables) {
+find_minima <- function(grid) {
+  minima <- tibble(x = integer(), y = integer(), z = integer())
+  for (x in 1:nrow(grid)) {
+    for (y in 1:ncol(grid)) {
+      z <- grid[x,y]
+      if (x == 1) {
+        neighbors <- c(grid[x+1,y])
+      } else if (x == nrow(grid)) {
+        neighbors <- c(grid[x-1,y])
+      } else {
+        neighbors <- c(grid[x+1,y], grid[x-1,y])
+      }
+      if (y == 1) {
+        neighbors <- c(neighbors, grid[x,y+1])
+      } else if (y == ncol(grid)) {
+        neighbors <- c(neighbors, grid[x,y-1])
+      } else {
+        neighbors <- c(neighbors, grid[x,y+1], grid[x,y-1])
+      }
 
+      # edge cases produce NA!
+      if (all(z < neighbors)) {
+        minima <- bind_rows(minima, tibble_row(x = x, y = y, z = z))
+      }
+    }
+  }
+  minima
 }
-
 #' @rdname day09
 #' @export
-f09b <- function(x) {
+f09b <- function(x, ) {
 
 }
+# for all minima, look at adjacent points
+# add to area and todo if greater than minimum and less than 9
+# store done points in array
 
 
 f09_helper <- function(x) {
