@@ -105,31 +105,22 @@ find_minima <- function(grid) {
   }
   minima
 }
+
+#' Clue to use `raster` from Albert Rapp, @rappa753 on twitter
+#' Other clue is that basins are bounded by 9's (plotting EDA FTW!)
 #' @rdname day09
 #' @export
-f09b <- function(x, ) {
+f09b <- function(x) {
+  grid <- make_grid(x)
+  boolgrid <- grid != 9
+  gridmap <- raster::raster(boolgrid)
+  basins <- raster::clump(gridmap, directions = 4)
+  basinareas <- basins %>%
+    raster::freq() %>%
+    as_tibble() %>%
+    drop_na() %>%
+    arrange(desc(count)) %>%
+    pull(count)
 
-}
-# for all minima, look at adjacent points
-# add to area and todo if greater than minimum and less than 9
-# store done points in array
-
-
-f09_helper <- function(x) {
-
-}
-
-
-#' @param example Which example data to use (by position or name). Defaults to
-#'   1.
-#' @rdname day09
-#' @export
-example_data_09 <- function(example = 1) {
-  l <- list(
-    a = c(
-
-
-    )
-  )
-  l[[example]]
+  prod(basinareas[1:3])
 }
