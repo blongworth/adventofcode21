@@ -101,38 +101,42 @@
 #' f10a(example_data_10())
 #' f10b()
 f10a <- function(x) {
-
-
+  scores <- map(x, bracketeer)
+  sum(map_dbl(scores, 1))
 }
 
 
 #' @rdname day10
 #' @export
 f10b <- function(x) {
-
+  scores <- map(x, bracketeer)
+  autoscores <- sort(map_dbl(scores, 2))
+  autoscores <- autoscores[which(autoscores != 0)]
+  autoscores[ceiling(length(autoscores)/2)]
 }
 
-
+# using stack approach
 bracketeer <- function(line) {
-  opened <- list(paren = 0,
-                 square = 0,
-                 curly = 0,
-                 gtlt = 0)
+  opener <- c("(", "[", "{", "<")
+  closer <- c(")", "]", "}", ">")
+  points <- c(3, 57, 1197, 25137)
+  autopoints <- c(1, 2, 3, 4)
+  score <-  0
+  autoscore = 0
+  stack <- character()
   for (char in unlist(strsplit(line, ''))) {
-    print(char)
-    switch(char,
-           '(' = (opened$paren <- opened$paren + 1),
-           ')' = (opened$paren <- opened$paren - 1),
-           '[' = (opened$square <- opened$square + 1),
-           ']' = (opened$square <- opened$square - 1),
-           '{' = (opened$curly <- opened$curly + 1),
-           '}' = (opened$curly <- opened$curly - 1),
-           '<' = (opened$gtlt <- opened$gtlt + 1),
-           '>' = (opened$gtlt <- opened$gtlt - 1)
-              )
-    if (any(opened < 0)) return(opened)
+    if (char %in% openers) {
+      stack <- c(stack, closer[which(opener == char)])
+    } else if (char == stack[length(stack)]) {
+      stack <- stack[1:(length(stack)-1)]
+    } else {
+      return(list(score = points[which(closer == char)], autoscore = 0))
+    }
   }
-  opened
+  for (i in length(stack):1) {
+    autoscore <- 5 * autoscore + autopoints[which(closer == stack[i])]
+  }
+  list(score = 0, autoscore = autoscore)
 }
 
 
